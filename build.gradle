@@ -12,7 +12,10 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
     testImplementation "org.jetbrains.kotlin:kotlin-test-js"
-    implementation npm("@types/google-apps-script", "1.0.16")
+    implementation npm("@types/google-apps-script", "1.0.16", false) // 今の所なぜかコンパイルエラーになってしまうのでgenerateExternalsをfalseに設定
+    implementation npm("@google/clasp", "2.3.0")
+    implementation npm("browserify", "16.5.2")
+    implementation npm("gasify", "1.0.1")
 }
 
 kotlin {
@@ -31,4 +34,20 @@ kotlin {
         }
         binaries.executable()
     }
+}
+
+task convertForGas(type: Exec) {
+    executable "$buildDir/js/node_modules/.bin/browserify"
+    args "./gas/main.js", "-p", "$buildDir/js/node_modules/gasify", "-o", "./gas_dist/Code.js"
+}
+
+task push(type: Exec) {
+    executable "$buildDir/js/node_modules/.bin/clasp"
+    args "push"
+}
+
+task buildAndPush {
+    dependsOn build
+    dependsOn convertForGas
+    dependsOn push
 }
