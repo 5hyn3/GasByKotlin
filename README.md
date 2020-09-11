@@ -14,5 +14,4 @@ GASをKotlin1.4で動かしてみたサンプルです
 1. Kotlinのコードを書く
 2. Kotlinのコードをビルドする
 3. gas/main.jsを書く
-4. `browserify gas/main.js -p gasify -o gas_dist/Code.js`
-5. `clasp push`
+4. `./gradlew buildAndPush`
